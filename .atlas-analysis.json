@@ -1,0 +1,78 @@
+{
+  "projectType": "frontend",
+  "projectName": "Lucide Animated",
+  "projectDescription": "A collection of beautifully crafted animated icons based on Lucide icons with React and Framer Motion.",
+  "theme": "willow",
+  "primaryColor": "#F97316",
+  "lightColor": "#FED7AA",
+  "darkColor": "#EA580C",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "installation",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Usage",
+            "pages": [
+              "usage/basic-usage",
+              "usage/imperative-control",
+              "usage/styling",
+              "usage/with-shadcn"
+            ]
+          },
+          {
+            "group": "Components",
+            "pages": [
+              "components/overview",
+              "components/icon-props",
+              "components/animation-control"
+            ]
+          },
+          {
+            "group": "Contributing",
+            "pages": [
+              "contributing/guidelines",
+              "contributing/creating-icons",
+              "contributing/animation-tips"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Icons",
+        "groups": [
+          {
+            "group": "Icon Library",
+            "pages": [
+              "icons/all-icons",
+              "icons/categories"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "381+ animated icons based on Lucide icons",
+    "React components with TypeScript support",
+    "Framer Motion animations with hover interactions",
+    "Imperative animation control with ref API",
+    "shadcn/ui CLI integration",
+    "Customizable size and styling",
+    "Framework ports (Svelte, Vue, Angular, Flutter)"
+  ],
+  "publicApiSurface": [
+    "All icon components (e.g., HeartIcon, SearchIcon, BellIcon)",
+    "IconHandle interface (startAnimation, stopAnimation methods)",
+    "Icon props (size, className, onMouseEnter, onMouseLeave)",
+    "shadcn CLI integration via registry"
+  ]
+}
