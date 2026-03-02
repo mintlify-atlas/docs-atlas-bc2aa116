@@ -34,8 +34,8 @@ To control an icon programmatically, create a ref with the icon's handle type:
 
 ```tsx
 import { useRef } from 'react';
-import { HeartIcon } from 'lucide-animated';
-import type { HeartIconHandle } from 'lucide-animated';
+import { HeartIcon } from '@/components/ui/icon-name';
+import type { HeartIconHandle } from '@/components/ui/icon-name';
 
 export default function Example() {
   const heartRef = useRef<HeartIconHandle>(null);
@@ -180,8 +180,8 @@ Even in controlled mode, you can implement custom hover behavior:
 
 ```tsx
 import { useRef } from 'react';
-import { BellIcon } from 'lucide-animated';
-import type { BellIconHandle } from 'lucide-animated';
+import { BellIcon } from '@/components/ui/icon-name';
+import type { BellIconHandle } from '@/components/ui/icon-name';
 
 export default function CustomHover() {
   const bellRef = useRef<BellIconHandle>(null);
@@ -202,8 +202,8 @@ Trigger animations on click instead of hover:
 
 ```tsx
 import { useRef } from 'react';
-import { HeartIcon } from 'lucide-animated';
-import type { HeartIconHandle } from 'lucide-animated';
+import { HeartIcon } from '@/components/ui/icon-name';
+import type { HeartIconHandle } from '@/components/ui/icon-name';
 
 export default function ClickToAnimate() {
   const heartRef = useRef<HeartIconHandle>(null);
@@ -225,8 +225,8 @@ Animate on keyboard focus for accessibility:
 
 ```tsx
 import { useRef } from 'react';
-import { SparklesIcon } from 'lucide-animated';
-import type { SparklesIconHandle } from 'lucide-animated';
+import { SparklesIcon } from '@/components/ui/icon-name';
+import type { SparklesIconHandle } from '@/components/ui/icon-name';
 
 export default function FocusAnimation() {
   const sparklesRef = useRef<SparklesIconHandle>(null);
@@ -249,8 +249,8 @@ Animate based on application state:
 
 ```tsx
 import { useRef, useEffect } from 'react';
-import { BellIcon } from 'lucide-animated';
-import type { BellIconHandle } from 'lucide-animated';
+import { BellIcon } from '@/components/ui/icon-name';
+import type { BellIconHandle } from '@/components/ui/icon-name';
 
 export default function NotificationBell({ hasUnread }: { hasUnread: boolean }) {
   const bellRef = useRef<BellIconHandle>(null);
@@ -273,8 +273,8 @@ Create animation sequences with delays:
 
 ```tsx
 import { useRef, useEffect } from 'react';
-import { HeartIcon, SparklesIcon } from 'lucide-animated';
-import type { HeartIconHandle, SparklesIconHandle } from 'lucide-animated';
+import { HeartIcon, SparklesIcon } from '@/components/ui/icon-name';
+import type { HeartIconHandle, SparklesIconHandle } from '@/components/ui/icon-name';
 
 export default function AnimationSequence() {
   const heartRef = useRef<HeartIconHandle>(null);
@@ -309,8 +309,8 @@ Combine controlled animations with custom business logic:
 
 ```tsx
 import { useRef, useState } from 'react';
-import { HeartIcon } from 'lucide-animated';
-import type { HeartIconHandle } from 'lucide-animated';
+import { HeartIcon } from '@/components/ui/icon-name';
+import type { HeartIconHandle } from '@/components/ui/icon-name';
 
 export default function LikeButton() {
   const heartRef = useRef<HeartIconHandle>(null);
@@ -377,7 +377,7 @@ TypeScript ensures type-safe control:
 
 ```tsx
 import { useRef } from 'react';
-import type { HeartIconHandle } from 'lucide-animated';
+import type { HeartIconHandle } from '@/components/ui/icon-name';
 
 // Correct types
 const heartRef = useRef<HeartIconHandle>(null);

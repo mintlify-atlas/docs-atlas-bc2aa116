@@ -33,7 +33,7 @@ This means every icon accepts:
 **Example:**
 
 ```tsx
-import { HeartIcon } from 'lucide-animated';
+import { HeartIcon } from '@/components/ui/icon-name';
 
 export default function Example() {
   return (
@@ -56,7 +56,7 @@ export default function Example() {
 **Example:**
 
 ```tsx
-import { BellIcon } from 'lucide-animated';
+import { BellIcon } from '@/components/ui/icon-name';
 
 export default function Example() {
   return (
@@ -78,7 +78,7 @@ export default function Example() {
 **Example:**
 
 ```tsx
-import { SparklesIcon } from 'lucide-animated';
+import { SparklesIcon } from '@/components/ui/icon-name';
 
 export default function Example() {
   return (
@@ -104,7 +104,7 @@ export default function Example() {
 **Uncontrolled Example:**
 
 ```tsx
-import { HeartIcon } from 'lucide-animated';
+import { HeartIcon } from '@/components/ui/icon-name';
 
 export default function Example() {
   return (
@@ -120,8 +120,8 @@ export default function Example() {
 
 ```tsx
 import { useRef } from 'react';
-import { HeartIcon } from 'lucide-animated';
-import type { HeartIconHandle } from 'lucide-animated';
+import { HeartIcon } from '@/components/ui/icon-name';
+import type { HeartIconHandle } from '@/components/ui/icon-name';
 
 export default function Example() {
   const iconRef = useRef<HeartIconHandle>(null);
@@ -148,8 +148,8 @@ export default function Example() {
 
 ```tsx
 import { useRef } from 'react';
-import { BellIcon } from 'lucide-animated';
-import type { BellIconHandle } from 'lucide-animated';
+import { BellIcon } from '@/components/ui/icon-name';
+import type { BellIconHandle } from '@/components/ui/icon-name';
 
 export default function ControlledExample() {
   const bellRef = useRef<BellIconHandle>(null);
@@ -182,7 +182,7 @@ export default function ControlledExample() {
 **Example:**
 
 ```tsx
-import { SparklesIcon } from 'lucide-animated';
+import { SparklesIcon } from '@/components/ui/icon-name';
 
 export default function Example() {
   return (
@@ -214,7 +214,7 @@ Since icons extend `HTMLAttributes<HTMLDivElement>`, all ARIA attributes are sup
 **Example:**
 
 ```tsx
-import { HeartIcon } from 'lucide-animated';
+import { HeartIcon } from '@/components/ui/icon-name';
 
 export default function AccessibleExample() {
   return (
@@ -234,8 +234,8 @@ All props can be combined for complete customization:
 
 ```tsx
 import { useRef } from 'react';
-import { BellIcon } from 'lucide-animated';
-import type { BellIconHandle } from 'lucide-animated';
+import { BellIcon } from '@/components/ui/icon-name';
+import type { BellIconHandle } from '@/components/ui/icon-name';
 
 export default function FullExample() {
   const bellRef = useRef<BellIconHandle>(null);
@@ -267,7 +267,7 @@ export default function FullExample() {
 Custom data attributes are also supported:
 
 ```tsx
-import { SparklesIcon } from 'lucide-animated';
+import { SparklesIcon } from '@/components/ui/icon-name';
 
 export default function Example() {
   return (
@@ -285,7 +285,7 @@ export default function Example() {
 All props are fully typed. The component accepts the icon-specific Handle type and props:
 
 ```tsx
-import type { HeartIconHandle } from 'lucide-animated';
+import type { HeartIconHandle } from '@/components/ui/icon-name';
 import type { HTMLAttributes } from 'react';
 
 // Props interface for each icon

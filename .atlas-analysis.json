@@ -61,7 +61,7 @@
     ]
   },
   "keyFeatures": [
-    "381+ animated icons based on Lucide icons",
+    "379+ animated icons based on Lucide icons",
     "React components with TypeScript support",
     "Framer Motion animations with hover interactions",
     "Imperative animation control with ref API",
