@@ -1,0 +1,164 @@
+---
+title: Basic Usage
+description: Learn how to import and use Lucide Animated icons in your React application
+---
+
+Lucide Animated icons are React components that come with built-in hover animations. Each icon is a fully-featured component that animates on mouse hover by default.
+
+## Importing Icons
+
+Import icons individually by name from the package. Icon names use PascalCase with an "Icon" suffix:
+
+```tsx
+import { HeartIcon } from "lucide-animated";
+import { BellIcon } from "lucide-animated";
+import { CheckIcon } from "lucide-animated";
+```
+
+## Basic Rendering
+
+Render icons as React components. By default, they animate on hover:
+
+```tsx
+import { HeartIcon } from "lucide-animated";
+
+export default function App() {
+  return (
+    <div>
+      <HeartIcon />
+    </div>
+  );
+}
+```
+
+Hover over the icon to see the animation play automatically.
+
+## Customizing Size
+
+All icons accept a `size` prop to control their dimensions. The default size is 28 pixels:
+
+```tsx
+import { BellIcon } from "lucide-animated";
+
+export default function IconSizes() {
+  return (
+    <div className="flex items-center gap-4">
+      {/* Small */}
+      <BellIcon size={20} />
+      
+      {/* Default */}
+      <BellIcon />
+      
+      {/* Large */}
+      <BellIcon size={48} />
+      
+      {/* Extra large */}
+      <BellIcon size={64} />
+    </div>
+  );
+}
+```
+
+## Common Props
+
+Icons extend standard HTML div attributes, so you can pass any props you'd normally use:
+
+<CodeGroup>
+
+```tsx onClick Handler
+import { CheckIcon } from "lucide-animated";
+
+export default function ClickableIcon() {
+  const handleClick = () => {
+    console.log("Icon clicked!");
+  };
+
+  return <CheckIcon onClick={handleClick} />;
+}
+```
+
+```tsx ARIA Attributes
+import { HeartIcon } from "lucide-animated";
+
+export default function AccessibleIcon() {
+  return (
+    <HeartIcon 
+      aria-label="Like"
+      role="button"
+      tabIndex={0}
+    />
+  );
+}
+```
+
+```tsx Data Attributes
+import { BellIcon } from "lucide-animated";
+
+export default function TrackedIcon() {
+  return (
+    <BellIcon 
+      data-testid="notification-bell"
+      data-analytics="notification-icon"
+    />
+  );
+}
+```
+
+</CodeGroup>
+
+## Animation on Hover
+
+Each icon has a unique animation that plays on hover. The animation behavior varies by icon:
+
+<CardGroup cols={2}>
+  <Card title="HeartIcon">
+    Scales up and down with a pulse effect
+  </Card>
+  <Card title="BellIcon">
+    Rotates back and forth like a ringing bell
+  </Card>
+  <Card title="CheckIcon">
+    Draws the checkmark path from start to finish
+  </Card>
+  <Card title="ActivityIcon">
+    Animates the activity line from left to right
+  </Card>
+</CardGroup>
+
+## Complete Example
+
+Here's a complete example showing multiple icons with different sizes and hover animations:
+
+```tsx
+import { HeartIcon, BellIcon, CheckIcon, ActivityIcon } from "lucide-animated";
+
+export default function IconShowcase() {
+  return (
+    <div className="flex items-center gap-6 p-8">
+      <div className="text-center">
+        <HeartIcon size={32} />
+        <p className="mt-2 text-sm">Heart</p>
+      </div>
+      
+      <div className="text-center">
+        <BellIcon size={32} />
+        <p className="mt-2 text-sm">Bell</p>
+      </div>
+      
+      <div className="text-center">
+        <CheckIcon size={32} />
+        <p className="mt-2 text-sm">Check</p>
+      </div>
+      
+      <div className="text-center">
+        <ActivityIcon size={32} />
+        <p className="mt-2 text-sm">Activity</p>
+      </div>
+    </div>
+  );
+}
+```
+
+<Note>
+Hover animations are disabled when using imperative control via refs. See the [Imperative Control](/usage/imperative-control) guide for more details.
+</Note>

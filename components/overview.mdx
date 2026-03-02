@@ -1,0 +1,264 @@
+---
+title: Component Architecture
+description: Understanding how Lucide Animated icon components are structured and work internally
+---
+
+## Overview
+
+Lucide Animated icons are built as React components that combine Lucide SVG icons with Framer Motion animations. Each icon component follows a consistent architecture pattern that enables both automatic hover animations and programmatic control.
+
+## Core Architecture
+
+Every icon component in Lucide Animated follows this structure:
+
+```tsx
+'use client';
+
+import { useAnimation } from 'motion/react';
+import type { HTMLAttributes } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
+import { cn } from '@/lib/utils';
+
+export interface [IconName]Handle {
+  startAnimation: () => void;
+  stopAnimation: () => void;
+}
+
+interface [IconName]Props extends HTMLAttributes<HTMLDivElement> {
+  size?: number;
+}
+
+const [IconName] = forwardRef<[IconName]Handle, [IconName]Props>(
+  ({ onMouseEnter, onMouseLeave, className, size = 28, ...props }, ref) => {
+    const controls = useAnimation();
+    const isControlledRef = useRef(false);
+
+    useImperativeHandle(ref, () => {
+      isControlledRef.current = true;
+      return {
+        startAnimation: () => controls.start('animate'),
+        stopAnimation: () => controls.start('normal'),
+      };
+    });
+
+    const handleMouseEnter = useCallback(
+      (e: React.MouseEvent<HTMLDivElement>) => {
+        if (isControlledRef.current) {
+          onMouseEnter?.(e);
+        } else {
+          controls.start('animate');
+        }
+      },
+      [controls, onMouseEnter]
+    );
+
+    const handleMouseLeave = useCallback(
+      (e: React.MouseEvent<HTMLDivElement>) => {
+        if (isControlledRef.current) {
+          onMouseLeave?.(e);
+        } else {
+          controls.start('normal');
+        }
+      },
+      [controls, onMouseLeave]
+    );
+
+    return (
+      <div
+        className={cn(className)}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        {...props}
+      >
+        <motion.svg
+          animate={controls}
+          fill="none"
+          height={size}
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          variants={{
+            normal: { scale: 1 },
+            animate: { scale: [1, 1.08, 1] },
+          }}
+          viewBox="0 0 24 24"
+          width={size}
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          {/* SVG paths */}
+        </motion.svg>
+      </div>
+    );
+  }
+);
+
+[IconName].displayName = '[IconName]';
+
+export { [IconName] };
+```
+
+## Key Components
+
+### Dual-Mode System
+
+Each icon supports two operating modes:
+
+<Card title="Uncontrolled Mode" icon="wand-sparkles">
+  Default behavior - animations trigger automatically on hover
+</Card>
+
+<Card title="Controlled Mode" icon="sliders-horizontal">
+  Programmatic control via ref - animations triggered by `startAnimation()` and `stopAnimation()` methods
+</Card>
+
+### Animation Control Flow
+
+The `isControlledRef` pattern determines which mode the icon operates in:
+
+```tsx
+const isControlledRef = useRef(false);
+
+useImperativeHandle(ref, () => {
+  isControlledRef.current = true; // Switches to controlled mode
+  return {
+    startAnimation: () => controls.start('animate'),
+    stopAnimation: () => controls.start('normal'),
+  };
+});
+```
+
+When a ref is attached, `isControlledRef.current` becomes `true`, disabling automatic hover animations.
+
+### Mouse Event Handlers
+
+The handlers check the control mode before triggering animations:
+
+```tsx
+const handleMouseEnter = useCallback(
+  (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isControlledRef.current) {
+      onMouseEnter?.(e); // Pass through to parent
+    } else {
+      controls.start('animate'); // Auto-animate
+    }
+  },
+  [controls, onMouseEnter]
+);
+```
+
+## Animation with Framer Motion
+
+All animations use Framer Motion's `motion` components and `useAnimation` hook:
+
+### Simple Animation Example
+
+From `heart.tsx:61-82`:
+
+```tsx
+<motion.svg
+  animate={controls}
+  variants={{
+    normal: { scale: 1 },
+    animate: { scale: [1, 1.08, 1] },
+  }}
+  transition={{
+    duration: 0.45,
+    repeat: 2,
+  }}
+>
+  <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+</motion.svg>
+```
+
+### Complex Multi-Element Animation
+
+From `smile.tsx:109-157`:
+
+```tsx
+<motion.svg variants={faceVariants}>
+  <motion.circle cx="12" cy="12" r="10" />
+  <motion.path
+    variants={mouthVariants}
+    d="M8 14s1.5 2 4 2 4-2 4-2"
+  />
+  <motion.line
+    variants={eyeVariants}
+    x1="9" x2="9.01" y1="9" y2="9"
+  />
+</motion.svg>
+```
+
+Different elements can have independent variant definitions for coordinated animations.
+
+### Multiple Animation Controls
+
+Some icons use multiple `useAnimation()` instances for complex choreography.
+
+From `sparkles.tsx:54-70`:
+
+```tsx
+const starControls = useAnimation();
+const sparkleControls = useAnimation();
+
+return {
+  startAnimation: () => {
+    sparkleControls.start('hover');
+    starControls.start('blink', { delay: 1 });
+  },
+  stopAnimation: () => {
+    sparkleControls.start('initial');
+    starControls.start('initial');
+  },
+};
+```
+
+## Variants Pattern
+
+Variants define animation states. They can be defined inline or as constants:
+
+```tsx
+// Inline variants
+const variants = {
+  normal: { scale: 1 },
+  animate: { scale: [1, 1.08, 1] },
+};
+
+// Constant variants (typed)
+const SVG_VARIANTS: Variants = {
+  normal: { rotate: 0 },
+  animate: { rotate: [0, -10, 10, -10, 0] },
+};
+```
+
+## Design Principles
+
+<CardGroup cols={2}>
+  <Card title="Consistency" icon="check-circle">
+    All icons follow the same structural pattern for predictable behavior
+  </Card>
+  <Card title="Flexibility" icon="settings">
+    Support both automatic and manual animation control
+  </Card>
+  <Card title="Composition" icon="layers">
+    Built with standard React patterns (forwardRef, useImperativeHandle)
+  </Card>
+  <Card title="Performance" icon="zap">
+    Use `useCallback` for memoized event handlers
+  </Card>
+</CardGroup>
+
+## Template Structure
+
+When creating new icons, follow this template from CONTRIBUTING.md:
+
+1. **Client Component Directive**: Start with `'use client';`
+2. **Type Definitions**: Export `[IconName]Handle` interface and props interface
+3. **Component Implementation**: Use `forwardRef` with proper typing
+4. **Animation Setup**: Initialize `useAnimation()` and `isControlledRef`
+5. **Ref Handling**: Implement `useImperativeHandle` for control API
+6. **Event Handlers**: Create memoized mouse event callbacks
+7. **Render**: Return wrapper div with motion.svg and animation variants
+8. **Display Name**: Set component displayName for debugging
+
+This consistent structure ensures all icons work seamlessly with both usage patterns.

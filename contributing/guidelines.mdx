@@ -1,0 +1,126 @@
+---
+title: Contributing Guidelines
+description: Learn how to contribute animated icons to Lucide Animated
+---
+
+We welcome contributions to Lucide Animated! Follow these guidelines to ensure your contribution meets our quality standards.
+
+## Important Constraints
+
+<Warning>
+**Based on Lucide Icons Only** - This project only accepts contributions based on [Lucide icons](https://lucide.dev/). Pull requests containing custom icons or icons from other icon packs will be closed.
+</Warning>
+
+<Warning>
+**No Simple Path Animations** - Pull requests with simple path length animations (`strokeDasharray`/`strokeDashoffset` "drawing" effect) will likely be rejected. This type of animation looks generic and doesn't add meaningful interaction. We're looking for creative, purposeful animations that enhance the icon's meaning.
+</Warning>
+
+## Animation Quality Requirements
+
+Good animations should:
+
+- Enhance the icon's meaning and purpose
+- Be creative and purposeful, not generic
+- Use Framer Motion effectively
+- Provide meaningful visual feedback on interaction
+- Feel smooth and natural
+
+## How to Contribute
+
+<Steps>
+  <Step title="Fork the repository">
+    Fork the repository on GitHub to your account.
+  </Step>
+
+  <Step title="Clone your fork">
+    Clone your forked repository to your local machine:
+
+    ```bash
+    git clone https://github.com/pqoqubbw/icons.git
+    ```
+  </Step>
+
+  <Step title="Navigate to project">
+    Navigate to the project directory:
+
+    ```bash
+    cd icons
+    ```
+  </Step>
+
+  <Step title="Create a new branch">
+    Create a new branch for your feature or bug fix:
+
+    ```bash
+    git checkout -b your-branch-name
+    ```
+  </Step>
+
+  <Step title="Install dependencies">
+    Install the project dependencies:
+
+    ```bash
+    pnpm install
+    ```
+  </Step>
+
+  <Step title="Create your animated icon">
+    See the [Creating Icons guide](/contributing/creating-icons) for detailed instructions on creating new animated icons.
+  </Step>
+
+  <Step title="Update the registry">
+    After creating a new icon, update the registry so it can be used with the shadcn CLI:
+
+    ```bash
+    pnpm run gen-cli
+    ```
+
+    This command will automatically sync your new icon to the registry and build the necessary JSON files.
+  </Step>
+
+  <Step title="Build and test">
+    Build the project to check for errors:
+
+    ```bash
+    pnpm build
+    ```
+
+    Test the application to ensure your changes work as expected:
+
+    ```bash
+    pnpm lint
+    ```
+  </Step>
+
+  <Step title="Commit your changes">
+    Commit your changes with a descriptive message:
+
+    ```bash
+    git commit -m "Add [icon-name] animated icon"
+    ```
+  </Step>
+
+  <Step title="Push to your fork">
+    Push your changes to your fork:
+
+    ```bash
+    git push origin your-branch-name
+    ```
+  </Step>
+
+  <Step title="Open a pull request">
+    Open a pull request on the original repository with a clear description of the icon you've added and the animation you've implemented.
+  </Step>
+</Steps>
+
+## Pull Request Guidelines
+
+When submitting a pull request:
+
+1. **Clear Description** - Provide a clear description of the icon and animation
+2. **Follow Standards** - Ensure your code follows the existing patterns
+3. **Test Thoroughly** - Test your animation across different scenarios
+4. **One Icon Per PR** - Submit one icon per pull request for easier review
+5. **Use Lucide Data** - Use exact icon names and keywords from [lucide.dev](https://lucide.dev/)
+
+Thank you for contributing to Lucide Animated!

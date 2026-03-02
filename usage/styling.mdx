@@ -1,0 +1,320 @@
+---
+title: Styling Icons
+description: Customize icon appearance using className, CSS, and Tailwind CSS
+---
+
+Lucide Animated icons are designed to be easily styled using CSS and Tailwind CSS. Icons inherit color from their parent and can be customized with utility classes.
+
+## Using className
+
+All icons accept a `className` prop that's applied to the wrapper div. You can use this to apply any CSS classes:
+
+```tsx
+import { HeartIcon } from "lucide-animated";
+
+export default function StyledIcon() {
+  return <HeartIcon className="text-red-500" />;
+}
+```
+
+## The cn Utility
+
+Internally, icons use the `cn` utility function to merge class names. This is the same utility used throughout shadcn/ui:
+
+```ts
+import type { ClassValue } from "clsx";
+import { clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+```
+
+This allows you to conditionally apply classes and ensures Tailwind classes are properly merged:
+
+```tsx
+import { cn } from "@/lib/utils";
+import { BellIcon } from "lucide-animated";
+
+export default function ConditionalStyling({ hasNotification }: { hasNotification: boolean }) {
+  return (
+    <BellIcon 
+      className={cn(
+        "transition-colors",
+        hasNotification ? "text-blue-500" : "text-gray-400"
+      )}
+    />
+  );
+}
+```
+
+## Color Customization
+
+Icons use `stroke="currentColor"` on their SVG elements, which means they inherit the text color from their parent element or className:
+
+<CodeGroup>
+
+```tsx Text Color
+import { HeartIcon } from "lucide-animated";
+
+export default function ColoredIcons() {
+  return (
+    <div className="flex gap-4">
+      <HeartIcon className="text-red-500" />
+      <HeartIcon className="text-pink-500" />
+      <HeartIcon className="text-purple-500" />
+      <HeartIcon className="text-blue-500" />
+    </div>
+  );
+}
+```
+
+```tsx Parent Color
+import { BellIcon } from "lucide-animated";
+
+export default function InheritedColor() {
+  return (
+    <div className="text-green-500">
+      <BellIcon />
+    </div>
+  );
+}
+```
+
+```tsx Dark Mode
+import { CheckIcon } from "lucide-animated";
+
+export default function DarkModeIcon() {
+  return (
+    <CheckIcon className="text-gray-900 dark:text-gray-100" />
+  );
+}
+```
+
+</CodeGroup>
+
+## Tailwind CSS Integration
+
+Lucide Animated icons work seamlessly with Tailwind CSS utilities:
+
+### Spacing and Layout
+
+```tsx
+import { HeartIcon, BellIcon, CheckIcon } from "lucide-animated";
+
+export default function LayoutExample() {
+  return (
+    <div className="flex items-center justify-center gap-4 p-8">
+      <HeartIcon className="mr-2" />
+      <BellIcon className="mx-4" />
+      <CheckIcon className="ml-2" />
+    </div>
+  );
+}
+```
+
+### Opacity and Effects
+
+```tsx
+import { ActivityIcon } from "lucide-animated";
+
+export default function OpacityExample() {
+  return (
+    <div className="flex gap-4">
+      <ActivityIcon className="opacity-100" />
+      <ActivityIcon className="opacity-75" />
+      <ActivityIcon className="opacity-50" />
+      <ActivityIcon className="opacity-25" />
+    </div>
+  );
+}
+```
+
+### Hover States
+
+```tsx
+import { HeartIcon } from "lucide-animated";
+
+export default function HoverStates() {
+  return (
+    <div className="flex gap-4">
+      <HeartIcon className="text-gray-400 hover:text-red-500 transition-colors" />
+      <HeartIcon className="text-gray-400 hover:opacity-70 transition-opacity" />
+      <HeartIcon className="text-gray-400 hover:scale-110 transition-transform" />
+    </div>
+  );
+}
+```
+
+### Responsive Sizing
+
+Combine the `size` prop with responsive Tailwind classes:
+
+```tsx
+import { BellIcon } from "lucide-animated";
+
+export default function ResponsiveIcon() {
+  return (
+    <div>
+      {/* Size changes based on screen size */}
+      <BellIcon 
+        size={24} 
+        className="sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12"
+      />
+    </div>
+  );
+}
+```
+
+## Button Integration
+
+Icons work great inside buttons and other interactive elements:
+
+<CodeGroup>
+
+```tsx Primary Button
+import { CheckIcon } from "lucide-animated";
+
+export default function PrimaryButton() {
+  return (
+    <button className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+      <CheckIcon size={20} />
+      <span>Confirm</span>
+    </button>
+  );
+}
+```
+
+```tsx Icon Button
+import { BellIcon } from "lucide-animated";
+
+export default function IconButton() {
+  return (
+    <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
+      <BellIcon size={24} className="text-gray-700 dark:text-gray-300" />
+    </button>
+  );
+}
+```
+
+```tsx Outlined Button
+import { HeartIcon } from "lucide-animated";
+
+export default function OutlinedButton() {
+  return (
+    <button className="flex items-center gap-2 px-4 py-2 border-2 border-red-500 text-red-500 rounded-lg hover:bg-red-50">
+      <HeartIcon size={20} />
+      <span>Like</span>
+    </button>
+  );
+}
+```
+
+</CodeGroup>
+
+## Advanced Styling
+
+### Custom CSS Variables
+
+```tsx
+import { ActivityIcon } from "lucide-animated";
+
+export default function CSSVariables() {
+  return (
+    <div 
+      style={{ 
+        '--icon-color': '#3b82f6',
+        color: 'var(--icon-color)' 
+      } as React.CSSProperties}
+    >
+      <ActivityIcon />
+    </div>
+  );
+}
+```
+
+### Drop Shadows and Filters
+
+```tsx
+import { HeartIcon } from "lucide-animated";
+
+export default function FilterEffects() {
+  return (
+    <div className="flex gap-4">
+      <HeartIcon className="drop-shadow-lg text-red-500" />
+      <HeartIcon className="drop-shadow-2xl text-pink-500" />
+      <HeartIcon className="blur-[0.5px] text-purple-500" />
+    </div>
+  );
+}
+```
+
+### Gradient Text (Experimental)
+
+Since icons use `currentColor`, you can create gradient effects:
+
+```tsx
+import { BellIcon } from "lucide-animated";
+
+export default function GradientIcon() {
+  return (
+    <div className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+      <BellIcon size={48} />
+    </div>
+  );
+}
+```
+
+<Warning>
+Gradient text effects may not work consistently across all browsers and icon animations.
+</Warning>
+
+## Complete Styling Example
+
+Here's a comprehensive example combining multiple styling techniques:
+
+```tsx
+import { useRef, useState } from "react";
+import { HeartIcon, HeartIconHandle } from "lucide-animated";
+import { cn } from "@/lib/utils";
+
+export default function StyledLikeButton() {
+  const heartRef = useRef<HeartIconHandle>(null);
+  const [liked, setLiked] = useState(false);
+  const [count, setCount] = useState(42);
+
+  const handleLike = () => {
+    if (!liked) {
+      heartRef.current?.startAnimation();
+      setCount(count + 1);
+    } else {
+      setCount(count - 1);
+    }
+    setLiked(!liked);
+  };
+
+  return (
+    <button
+      onClick={handleLike}
+      className={cn(
+        "flex items-center gap-2 px-4 py-2 rounded-full transition-all",
+        "border-2 font-medium",
+        liked
+          ? "bg-red-50 border-red-500 text-red-500"
+          : "bg-white border-gray-300 text-gray-600 hover:border-gray-400"
+      )}
+    >
+      <HeartIcon 
+        ref={heartRef} 
+        size={20}
+        className={cn(
+          "transition-colors",
+          liked && "text-red-500"
+        )}
+      />
+      <span>{count}</span>
+    </button>
+  );
+}
+```

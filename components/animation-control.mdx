@@ -1,0 +1,423 @@
+---
+title: Animation Control
+description: Programmatic control of icon animations using refs and the IconHandle interface
+---
+
+## Overview
+
+Lucide Animated icons support both automatic hover animations and programmatic control via React refs. This dual-mode system is implemented using the `IconHandle` interface and the `isControlledRef` pattern.
+
+## IconHandle Interface
+
+Every icon component exports a corresponding handle interface with two methods:
+
+```tsx
+export interface IconNameHandle {
+  startAnimation: () => void;
+  stopAnimation: () => void;
+}
+```
+
+### Available Methods
+
+<ParamField path="startAnimation" type="() => void">
+  Triggers the icon's animation sequence. Starts the "animate" variant state.
+</ParamField>
+
+<ParamField path="stopAnimation" type="() => void">
+  Stops the animation and returns to the "normal" variant state.
+</ParamField>
+
+## Basic Usage
+
+To control an icon programmatically, create a ref with the icon's handle type:
+
+```tsx
+import { useRef } from 'react';
+import { HeartIcon } from 'lucide-animated';
+import type { HeartIconHandle } from 'lucide-animated';
+
+export default function Example() {
+  const heartRef = useRef<HeartIconHandle>(null);
+
+  const handleClick = () => {
+    heartRef.current?.startAnimation();
+  };
+
+  return (
+    <div>
+      <HeartIcon ref={heartRef} />
+      <button onClick={handleClick}>Animate Heart</button>
+    </div>
+  );
+}
+```
+
+<Note>
+  When a ref is attached to an icon, **automatic hover animations are disabled**. You must manually trigger animations using `startAnimation()` and `stopAnimation()`.
+</Note>
+
+## Control Flow
+
+The control mode is determined by the `isControlledRef` pattern:
+
+### Implementation Details
+
+From the source code (`heart.tsx:21-30`):
+
+```tsx
+const controls = useAnimation();
+const isControlledRef = useRef(false);
+
+useImperativeHandle(ref, () => {
+  isControlledRef.current = true; // Enable controlled mode
+
+  return {
+    startAnimation: () => controls.start('animate'),
+    stopAnimation: () => controls.start('normal'),
+  };
+});
+```
+
+### How It Works
+
+1. **Initial State**: `isControlledRef.current` is `false`
+2. **Ref Attachment**: When a ref is attached, `useImperativeHandle` executes
+3. **Mode Switch**: Sets `isControlledRef.current = true`
+4. **Control Methods**: Returns the `startAnimation` and `stopAnimation` methods
+
+### Mouse Event Behavior
+
+Mouse event handlers check the control mode (`bell.tsx:38-56`):
+
+```tsx
+const handleMouseEnter = useCallback(
+  (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isControlledRef.current) {
+      onMouseEnter?.(e); // Just pass the event through
+    } else {
+      controls.start('animate'); // Auto-animate
+    }
+  },
+  [controls, onMouseEnter]
+);
+
+const handleMouseLeave = useCallback(
+  (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isControlledRef.current) {
+      onMouseLeave?.(e); // Just pass the event through
+    } else {
+      controls.start('normal'); // Auto-reset
+    }
+  },
+  [controls, onMouseLeave]
+);
+```
+
+<CardGroup cols={2}>
+  <Card title="Uncontrolled Mode" icon="wand-sparkles">
+    `isControlledRef.current === false`
+    
+    Mouse events trigger animations automatically
+  </Card>
+  <Card title="Controlled Mode" icon="sliders-horizontal">
+    `isControlledRef.current === true`
+    
+    Mouse events are passed to parent handlers
+  </Card>
+</CardGroup>
+
+## useAnimation Hook
+
+Icons use Framer Motion's `useAnimation()` hook to control animations:
+
+```tsx
+import { useAnimation } from 'motion/react';
+
+const controls = useAnimation();
+
+// Start a variant
+controls.start('animate');
+
+// Stop and return to normal
+controls.start('normal');
+```
+
+### Multiple Animation Controls
+
+Complex icons may use multiple `useAnimation()` instances for choreographed effects.
+
+From `sparkles.tsx:54-70`:
+
+```tsx
+const starControls = useAnimation();
+const sparkleControls = useAnimation();
+const isControlledRef = useRef(false);
+
+useImperativeHandle(ref, () => {
+  isControlledRef.current = true;
+
+  return {
+    startAnimation: () => {
+      sparkleControls.start('hover');
+      starControls.start('blink', { delay: 1 }); // Delayed sequence
+    },
+    stopAnimation: () => {
+      sparkleControls.start('initial');
+      starControls.start('initial');
+    },
+  };
+});
+```
+
+This allows different parts of the icon to animate independently or in sequence.
+
+## Advanced Examples
+
+### Manual Hover Control
+
+Even in controlled mode, you can implement custom hover behavior:
+
+```tsx
+import { useRef } from 'react';
+import { BellIcon } from 'lucide-animated';
+import type { BellIconHandle } from 'lucide-animated';
+
+export default function CustomHover() {
+  const bellRef = useRef<BellIconHandle>(null);
+
+  return (
+    <BellIcon
+      ref={bellRef}
+      onMouseEnter={() => bellRef.current?.startAnimation()}
+      onMouseLeave={() => bellRef.current?.stopAnimation()}
+    />
+  );
+}
+```
+
+### Click to Animate
+
+Trigger animations on click instead of hover:
+
+```tsx
+import { useRef } from 'react';
+import { HeartIcon } from 'lucide-animated';
+import type { HeartIconHandle } from 'lucide-animated';
+
+export default function ClickToAnimate() {
+  const heartRef = useRef<HeartIconHandle>(null);
+
+  return (
+    <HeartIcon
+      ref={heartRef}
+      onClick={() => heartRef.current?.startAnimation()}
+      className="cursor-pointer"
+      aria-label="Like button"
+    />
+  );
+}
+```
+
+### Focus-Based Animation
+
+Animate on keyboard focus for accessibility:
+
+```tsx
+import { useRef } from 'react';
+import { SparklesIcon } from 'lucide-animated';
+import type { SparklesIconHandle } from 'lucide-animated';
+
+export default function FocusAnimation() {
+  const sparklesRef = useRef<SparklesIconHandle>(null);
+
+  return (
+    <SparklesIcon
+      ref={sparklesRef}
+      onFocus={() => sparklesRef.current?.startAnimation()}
+      onBlur={() => sparklesRef.current?.stopAnimation()}
+      tabIndex={0}
+      aria-label="Special effects"
+    />
+  );
+}
+```
+
+### Conditional Animation
+
+Animate based on application state:
+
+```tsx
+import { useRef, useEffect } from 'react';
+import { BellIcon } from 'lucide-animated';
+import type { BellIconHandle } from 'lucide-animated';
+
+export default function NotificationBell({ hasUnread }: { hasUnread: boolean }) {
+  const bellRef = useRef<BellIconHandle>(null);
+
+  useEffect(() => {
+    if (hasUnread) {
+      bellRef.current?.startAnimation();
+    } else {
+      bellRef.current?.stopAnimation();
+    }
+  }, [hasUnread]);
+
+  return <BellIcon ref={bellRef} />;
+}
+```
+
+### Timed Animation Sequence
+
+Create animation sequences with delays:
+
+```tsx
+import { useRef, useEffect } from 'react';
+import { HeartIcon, SparklesIcon } from 'lucide-animated';
+import type { HeartIconHandle, SparklesIconHandle } from 'lucide-animated';
+
+export default function AnimationSequence() {
+  const heartRef = useRef<HeartIconHandle>(null);
+  const sparklesRef = useRef<SparklesIconHandle>(null);
+
+  const playSequence = () => {
+    heartRef.current?.startAnimation();
+    
+    setTimeout(() => {
+      sparklesRef.current?.startAnimation();
+    }, 500);
+
+    setTimeout(() => {
+      heartRef.current?.stopAnimation();
+      sparklesRef.current?.stopAnimation();
+    }, 2000);
+  };
+
+  return (
+    <div className="flex gap-4">
+      <HeartIcon ref={heartRef} />
+      <SparklesIcon ref={sparklesRef} />
+      <button onClick={playSequence}>Play Sequence</button>
+    </div>
+  );
+}
+```
+
+### Controlled Mode with Custom Logic
+
+Combine controlled animations with custom business logic:
+
+```tsx
+import { useRef, useState } from 'react';
+import { HeartIcon } from 'lucide-animated';
+import type { HeartIconHandle } from 'lucide-animated';
+
+export default function LikeButton() {
+  const heartRef = useRef<HeartIconHandle>(null);
+  const [liked, setLiked] = useState(false);
+  const [count, setCount] = useState(0);
+
+  const handleLike = () => {
+    heartRef.current?.startAnimation();
+    setLiked(!liked);
+    setCount(liked ? count - 1 : count + 1);
+
+    // Stop animation after delay
+    setTimeout(() => {
+      heartRef.current?.stopAnimation();
+    }, 1000);
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      <HeartIcon
+        ref={heartRef}
+        onClick={handleLike}
+        className={liked ? 'text-red-500' : 'text-gray-400'}
+      />
+      <span>{count}</span>
+    </div>
+  );
+}
+```
+
+## Understanding the isControlledRef Pattern
+
+### Why useRef Instead of useState?
+
+The control mode uses `useRef` instead of `useState` for performance:
+
+```tsx
+const isControlledRef = useRef(false);
+```
+
+<AccordionGroup>
+  <Accordion title="Benefits of useRef">
+    - **No Re-renders**: Changing `ref.current` doesn't trigger re-renders
+    - **Persistent State**: Value persists across renders
+    - **Synchronous**: Changes are immediately available
+    - **Performance**: No additional render cycles when toggling mode
+  </Accordion>
+  
+  <Accordion title="When Mode Changes">
+    The mode only changes once when the ref is first attached via `useImperativeHandle`, then remains stable for the component's lifetime.
+  </Accordion>
+</AccordionGroup>
+
+### Ref Lifecycle
+
+1. **Component Mount**: `isControlledRef.current = false`
+2. **Ref Attachment**: Parent attaches ref to icon
+3. **useImperativeHandle Executes**: Sets `isControlledRef.current = true`
+4. **Controlled Mode Active**: Remains controlled until unmount
+
+## Type Safety
+
+TypeScript ensures type-safe control:
+
+```tsx
+import { useRef } from 'react';
+import type { HeartIconHandle } from 'lucide-animated';
+
+// Correct types
+const heartRef = useRef<HeartIconHandle>(null);
+heartRef.current?.startAnimation(); // ✓ Type-safe
+heartRef.current?.stopAnimation();  // ✓ Type-safe
+
+// TypeScript catches errors
+heartRef.current?.invalidMethod();  // ✗ Type error
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Use Controlled Mode For" icon="check">
+    - Custom trigger events (click, focus)
+    - Animation sequences
+    - State-dependent animations
+    - Complex interaction patterns
+  </Card>
+  
+  <Card title="Use Uncontrolled Mode For" icon="wand-sparkles">
+    - Simple hover interactions
+    - Default behavior
+    - Quick implementations
+    - Standard icon displays
+  </Card>
+</CardGroup>
+
+<Warning>
+  Remember: Attaching a ref **disables automatic hover animations**. If you want both hover and programmatic control, you must manually handle `onMouseEnter` and `onMouseLeave` to call `startAnimation()` and `stopAnimation()`.
+</Warning>
+
+## Summary
+
+The animation control system provides:
+
+- **Dual-mode operation**: Automatic hover or programmatic control
+- **Simple API**: Just two methods - `startAnimation()` and `stopAnimation()`
+- **Intelligent switching**: `isControlledRef` pattern automatically detects mode
+- **Full flexibility**: Complete control over when and how animations play
+- **Type safety**: Full TypeScript support for all operations
+
+This architecture makes Lucide Animated icons versatile enough for simple use cases while powerful enough for complex interactive applications.

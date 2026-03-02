@@ -1,0 +1,343 @@
+---
+title: Icon Props
+description: Complete reference for props available on all Lucide Animated icon components
+---
+
+## Overview
+
+All icon components in Lucide Animated share a common props interface that extends `HTMLAttributes<HTMLDivElement>`, providing full flexibility for styling and event handling.
+
+## Props Interface
+
+Each icon component defines props that extend HTML div attributes:
+
+```tsx
+interface IconProps extends HTMLAttributes<HTMLDivElement> {
+  size?: number;
+}
+```
+
+This means every icon accepts:
+- The `size` prop for controlling dimensions
+- All standard HTML div attributes (className, style, id, etc.)
+- All React event handlers (onClick, onMouseEnter, onFocus, etc.)
+
+## Core Props
+
+### size
+
+<ParamField path="size" type="number" default="28">
+  Controls both width and height of the icon in pixels. Applied to the SVG element.
+</ParamField>
+
+**Example:**
+
+```tsx
+import { HeartIcon } from 'lucide-animated';
+
+export default function Example() {
+  return (
+    <div className="flex gap-4 items-center">
+      <HeartIcon size={16} />  {/* Small */}
+      <HeartIcon size={24} />  {/* Medium */}
+      <HeartIcon size={32} />  {/* Large */}
+      <HeartIcon size={48} />  {/* Extra Large */}
+    </div>
+  );
+}
+```
+
+### className
+
+<ParamField path="className" type="string">
+  CSS class names to apply to the icon wrapper div. Merged with internal classes using `cn()` utility.
+</ParamField>
+
+**Example:**
+
+```tsx
+import { BellIcon } from 'lucide-animated';
+
+export default function Example() {
+  return (
+    <div>
+      <BellIcon className="text-blue-500" />
+      <BellIcon className="text-red-500 hover:text-red-700" />
+      <BellIcon className="opacity-50 transition-opacity hover:opacity-100" />
+    </div>
+  );
+}
+```
+
+### style
+
+<ParamField path="style" type="React.CSSProperties">
+  Inline styles applied to the wrapper div element.
+</ParamField>
+
+**Example:**
+
+```tsx
+import { SparklesIcon } from 'lucide-animated';
+
+export default function Example() {
+  return (
+    <SparklesIcon
+      style={{
+        color: '#FFD700',
+        cursor: 'pointer',
+        display: 'inline-block',
+      }}
+    />
+  );
+}
+```
+
+## Event Handler Props
+
+### onMouseEnter
+
+<ParamField path="onMouseEnter" type="(e: React.MouseEvent<HTMLDivElement>) => void">
+  Called when the mouse enters the icon area. In **controlled mode** (when using a ref), you must handle this yourself. In **uncontrolled mode**, the built-in handler triggers the animation.
+</ParamField>
+
+**Uncontrolled Example:**
+
+```tsx
+import { HeartIcon } from 'lucide-animated';
+
+export default function Example() {
+  return (
+    <HeartIcon
+      onMouseEnter={(e) => console.log('Mouse entered!')}
+    />
+    // Animation still triggers automatically
+  );
+}
+```
+
+**Controlled Example:**
+
+```tsx
+import { useRef } from 'react';
+import { HeartIcon } from 'lucide-animated';
+import type { HeartIconHandle } from 'lucide-animated';
+
+export default function Example() {
+  const iconRef = useRef<HeartIconHandle>(null);
+
+  return (
+    <HeartIcon
+      ref={iconRef}
+      onMouseEnter={() => {
+        console.log('Custom hover logic');
+        iconRef.current?.startAnimation();
+      }}
+    />
+  );
+}
+```
+
+### onMouseLeave
+
+<ParamField path="onMouseLeave" type="(e: React.MouseEvent<HTMLDivElement>) => void">
+  Called when the mouse leaves the icon area. In **controlled mode**, you handle animation reset. In **uncontrolled mode**, the icon automatically returns to the normal state.
+</ParamField>
+
+**Example:**
+
+```tsx
+import { useRef } from 'react';
+import { BellIcon } from 'lucide-animated';
+import type { BellIconHandle } from 'lucide-animated';
+
+export default function ControlledExample() {
+  const bellRef = useRef<BellIconHandle>(null);
+
+  return (
+    <BellIcon
+      ref={bellRef}
+      onMouseLeave={() => {
+        bellRef.current?.stopAnimation();
+      }}
+    />
+  );
+}
+```
+
+### Other Event Handlers
+
+<ParamField path="onClick" type="(e: React.MouseEvent<HTMLDivElement>) => void">
+  Standard click event handler
+</ParamField>
+
+<ParamField path="onFocus" type="(e: React.FocusEvent<HTMLDivElement>) => void">
+  Focus event handler (useful for keyboard navigation)
+</ParamField>
+
+<ParamField path="onBlur" type="(e: React.FocusEvent<HTMLDivElement>) => void">
+  Blur event handler
+</ParamField>
+
+**Example:**
+
+```tsx
+import { SparklesIcon } from 'lucide-animated';
+
+export default function Example() {
+  return (
+    <SparklesIcon
+      onClick={() => alert('Icon clicked!')}
+      onFocus={() => console.log('Focused')}
+      tabIndex={0}
+    />
+  );
+}
+```
+
+## Accessibility Props
+
+Since icons extend `HTMLAttributes<HTMLDivElement>`, all ARIA attributes are supported:
+
+<ParamField path="aria-label" type="string">
+  Accessible label for screen readers
+</ParamField>
+
+<ParamField path="role" type="string">
+  ARIA role (e.g., "button", "img")
+</ParamField>
+
+<ParamField path="tabIndex" type="number">
+  Tab order for keyboard navigation
+</ParamField>
+
+**Example:**
+
+```tsx
+import { HeartIcon } from 'lucide-animated';
+
+export default function AccessibleExample() {
+  return (
+    <HeartIcon
+      aria-label="Favorite this item"
+      role="button"
+      tabIndex={0}
+      onClick={() => console.log('Favorited')}
+    />
+  );
+}
+```
+
+## Combining Props
+
+All props can be combined for complete customization:
+
+```tsx
+import { useRef } from 'react';
+import { BellIcon } from 'lucide-animated';
+import type { BellIconHandle } from 'lucide-animated';
+
+export default function FullExample() {
+  const bellRef = useRef<BellIconHandle>(null);
+
+  const handleNotificationClick = () => {
+    bellRef.current?.startAnimation();
+    // Show notifications
+  };
+
+  return (
+    <BellIcon
+      ref={bellRef}
+      size={32}
+      className="text-blue-600 cursor-pointer transition-colors hover:text-blue-700"
+      style={{ marginRight: '1rem' }}
+      onClick={handleNotificationClick}
+      onMouseEnter={() => console.log('Hovering notification bell')}
+      aria-label="View notifications"
+      role="button"
+      tabIndex={0}
+      data-testid="notification-bell"
+    />
+  );
+}
+```
+
+## Data Attributes
+
+Custom data attributes are also supported:
+
+```tsx
+import { SparklesIcon } from 'lucide-animated';
+
+export default function Example() {
+  return (
+    <SparklesIcon
+      data-testid="sparkle-icon"
+      data-category="effects"
+      data-animation="enabled"
+    />
+  );
+}
+```
+
+## TypeScript Support
+
+All props are fully typed. The component accepts the icon-specific Handle type and props:
+
+```tsx
+import type { HeartIconHandle } from 'lucide-animated';
+import type { HTMLAttributes } from 'react';
+
+// Props interface for each icon
+interface HeartIconProps extends HTMLAttributes<HTMLDivElement> {
+  size?: number;
+}
+
+// Ref handle interface
+interface HeartIconHandle {
+  startAnimation: () => void;
+  stopAnimation: () => void;
+}
+```
+
+## Default Values
+
+<ResponseField name="Default Props" type="object">
+  <Expandable title="properties">
+    <ResponseField name="size" type="number" default="28">
+      Default icon size in pixels
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+All other props have no defaults and are optional.
+
+## Props Implementation
+
+Internally, props are destructured and passed to elements:
+
+```tsx
+const IconComponent = forwardRef<IconHandle, IconProps>(
+  ({ onMouseEnter, onMouseLeave, className, size = 28, ...props }, ref) => {
+    // onMouseEnter, onMouseLeave - intercepted for animation control
+    // className - merged with cn() utility
+    // size - applied to SVG width/height
+    // ...props - spread to wrapper div
+
+    return (
+      <div
+        className={cn(className)}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        {...props} // All other HTML attributes
+      >
+        <svg width={size} height={size}>
+          {/* SVG content */}
+        </svg>
+      </div>
+    );
+  }
+);
+```
+
+This pattern ensures maximum flexibility while maintaining consistent animation behavior.

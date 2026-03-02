@@ -1,0 +1,250 @@
+---
+title: Imperative Control
+description: Control icon animations programmatically using refs and the IconHandle interface
+---
+
+While icons animate on hover by default, you can take full control of animations using React refs. This is useful for triggering animations based on custom events, user interactions, or application state.
+
+## IconHandle Interface
+
+Every icon component exposes an `IconHandle` interface through refs with two methods:
+
+```tsx
+export interface IconHandle {
+  startAnimation: () => void;
+  stopAnimation: () => void;
+}
+```
+
+<ParamField path="startAnimation" type="() => void">
+  Starts or restarts the icon's animation sequence
+</ParamField>
+
+<ParamField path="stopAnimation" type="() => void">
+  Stops the animation and returns the icon to its normal state
+</ParamField>
+
+## Using Refs for Control
+
+Create a ref and attach it to the icon component. Once attached, you can call methods to control the animation:
+
+```tsx
+import { useRef } from "react";
+import { HeartIcon, HeartIconHandle } from "lucide-animated";
+
+export default function ControlledIcon() {
+  const heartRef = useRef<HeartIconHandle>(null);
+
+  return (
+    <div>
+      <HeartIcon ref={heartRef} />
+      
+      <button onClick={() => heartRef.current?.startAnimation()}>
+        Start Animation
+      </button>
+      
+      <button onClick={() => heartRef.current?.stopAnimation()}>
+        Stop Animation
+      </button>
+    </div>
+  );
+}
+```
+
+<Note>
+When a ref is attached, hover animations are automatically disabled. The icon will only animate when you explicitly call `startAnimation()`.
+</Note>
+
+## Real-World Examples
+
+<CodeGroup>
+
+```tsx Like Button
+import { useRef, useState } from "react";
+import { HeartIcon, HeartIconHandle } from "lucide-animated";
+
+export default function LikeButton() {
+  const heartRef = useRef<HeartIconHandle>(null);
+  const [liked, setLiked] = useState(false);
+
+  const handleLike = () => {
+    heartRef.current?.startAnimation();
+    setLiked(!liked);
+  };
+
+  return (
+    <button
+      onClick={handleLike}
+      className={liked ? "text-red-500" : "text-gray-500"}
+    >
+      <HeartIcon ref={heartRef} size={24} />
+    </button>
+  );
+}
+```
+
+```tsx Notification Badge
+import { useRef, useEffect } from "react";
+import { BellIcon, BellIconHandle } from "lucide-animated";
+
+export default function NotificationBell({ hasNewNotification }: { hasNewNotification: boolean }) {
+  const bellRef = useRef<BellIconHandle>(null);
+
+  useEffect(() => {
+    if (hasNewNotification) {
+      bellRef.current?.startAnimation();
+    }
+  }, [hasNewNotification]);
+
+  return (
+    <div className="relative">
+      <BellIcon ref={bellRef} size={24} />
+      {hasNewNotification && (
+        <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full" />
+      )}
+    </div>
+  );
+}
+```
+
+```tsx Form Validation
+import { useRef } from "react";
+import { CheckIcon, CheckIconHandle } from "lucide-animated";
+
+export default function FormField() {
+  const checkRef = useRef<CheckIconHandle>(null);
+
+  const handleValidation = (value: string) => {
+    if (value.length >= 8) {
+      checkRef.current?.startAnimation();
+    } else {
+      checkRef.current?.stopAnimation();
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      <input
+        type="password"
+        onChange={(e) => handleValidation(e.target.value)}
+        placeholder="Enter password"
+      />
+      <CheckIcon ref={checkRef} size={20} className="text-green-500" />
+    </div>
+  );
+}
+```
+
+```tsx Success Message
+import { useRef, useEffect } from "react";
+import { CheckIcon, CheckIconHandle } from "lucide-animated";
+
+export default function SuccessToast({ show }: { show: boolean }) {
+  const checkRef = useRef<CheckIconHandle>(null);
+
+  useEffect(() => {
+    if (show) {
+      checkRef.current?.startAnimation();
+    }
+  }, [show]);
+
+  if (!show) return null;
+
+  return (
+    <div className="flex items-center gap-3 p-4 bg-green-100 rounded-lg">
+      <CheckIcon ref={checkRef} size={24} className="text-green-600" />
+      <span>Action completed successfully!</span>
+    </div>
+  );
+}
+```
+
+</CodeGroup>
+
+## Implementation Details
+
+Here's how the imperative control is implemented in the source code:
+
+```tsx
+import { motion, useAnimation } from "motion/react";
+import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
+
+export interface HeartIconHandle {
+  startAnimation: () => void;
+  stopAnimation: () => void;
+}
+
+const HeartIcon = forwardRef<HeartIconHandle, HeartIconProps>(
+  ({ onMouseEnter, onMouseLeave, className, size = 28, ...props }, ref) => {
+    const controls = useAnimation();
+    const isControlledRef = useRef(false);
+
+    // Expose methods through ref
+    useImperativeHandle(ref, () => {
+      isControlledRef.current = true;
+
+      return {
+        startAnimation: () => controls.start("animate"),
+        stopAnimation: () => controls.start("normal"),
+      };
+    });
+
+    // Disable hover when controlled via ref
+    const handleMouseEnter = useCallback(
+      (e: React.MouseEvent<HTMLDivElement>) => {
+        if (isControlledRef.current) {
+          onMouseEnter?.(e);
+        } else {
+          controls.start("animate");
+        }
+      },
+      [controls, onMouseEnter]
+    );
+
+    const handleMouseLeave = useCallback(
+      (e: React.MouseEvent<HTMLDivElement>) => {
+        if (isControlledRef.current) {
+          onMouseLeave?.(e);
+        } else {
+          controls.start("normal");
+        }
+      },
+      [controls, onMouseLeave]
+    );
+
+    return (
+      <div
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        {...props}
+      >
+        <motion.svg
+          animate={controls}
+          variants={{
+            normal: { scale: 1 },
+            animate: { scale: [1, 1.08, 1] },
+          }}
+          transition={{
+            duration: 0.45,
+            repeat: 2,
+          }}
+        >
+          {/* SVG paths */}
+        </motion.svg>
+      </div>
+    );
+  }
+);
+```
+
+## Type-Safe Refs
+
+Each icon exports its own handle type for type safety:
+
+```tsx
+import { HeartIconHandle } from "lucide-animated";
+import { BellIconHandle } from "lucide-animated";
+import { CheckIconHandle } from "lucide-animated";
+```
+
+This ensures you get proper autocomplete and type checking when using refs.

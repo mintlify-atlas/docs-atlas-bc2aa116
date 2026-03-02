@@ -1,0 +1,349 @@
+---
+title: Using with shadcn/ui
+description: Install and use Lucide Animated icons via the shadcn/ui CLI
+---
+
+Lucide Animated icons are fully integrated with the shadcn/ui ecosystem. You can install individual icons using the shadcn CLI, just like any other shadcn component.
+
+## Installation via shadcn CLI
+
+Use the `shadcn` CLI to add icons to your project. Icons are installed as components in your `components/ui` directory:
+
+```bash
+npx shadcn@latest add https://lucide-animated.com/r/heart
+```
+
+This downloads the `HeartIcon` component and adds it to `components/ui/heart.tsx` in your project.
+
+## Installing Multiple Icons
+
+You can install multiple icons at once:
+
+```bash
+npx shadcn@latest add https://lucide-animated.com/r/heart
+npx shadcn@latest add https://lucide-animated.com/r/bell
+npx shadcn@latest add https://lucide-animated.com/r/check
+npx shadcn@latest add https://lucide-animated.com/r/activity
+```
+
+## Registry Structure
+
+Lucide Animated uses the standard shadcn registry format. Here's how icons are defined in the registry:
+
+```json
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "lucide-animated",
+  "homepage": "https://lucide-animated.com",
+  "items": [
+    {
+      "name": "heart",
+      "type": "registry:ui",
+      "registryDependencies": [],
+      "dependencies": ["motion"],
+      "devDependencies": [],
+      "files": [
+        {
+          "path": "heart.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "bell",
+      "type": "registry:ui",
+      "registryDependencies": [],
+      "dependencies": ["motion"],
+      "devDependencies": [],
+      "files": [
+        {
+          "path": "bell.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "check",
+      "type": "registry:ui",
+      "registryDependencies": [],
+      "dependencies": ["motion"],
+      "devDependencies": [],
+      "files": [
+        {
+          "path": "check.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    }
+  ]
+}
+```
+
+## Dependencies
+
+All icons have a single dependency: `motion` (Motion for React). The shadcn CLI automatically installs this when you add an icon:
+
+```bash
+npm install motion
+```
+
+Or if using pnpm, yarn, or bun:
+
+```bash
+pnpm add motion
+yarn add motion
+bun add motion
+```
+
+## Using Installed Icons
+
+Once installed via shadcn CLI, import icons from your components directory:
+
+```tsx
+import { HeartIcon } from "@/components/ui/heart";
+import { BellIcon } from "@/components/ui/bell";
+import { CheckIcon } from "@/components/ui/check";
+
+export default function App() {
+  return (
+    <div className="flex gap-4">
+      <HeartIcon />
+      <BellIcon />
+      <CheckIcon />
+    </div>
+  );
+}
+```
+
+## Benefits of shadcn Integration
+
+<CardGroup cols={2}>
+  <Card title="Full Control" icon="code">
+    Icons are copied to your project as source code, giving you complete control to modify animations, styling, and behavior.
+  </Card>
+  <Card title="No Bundle Bloat" icon="feather">
+    Only install the icons you need. Unused icons don't bloat your bundle.
+  </Card>
+  <Card title="Type Safety" icon="shield-check">
+    Full TypeScript support with proper types for props and ref handles.
+  </Card>
+  <Card title="Easy Updates" icon="arrows-rotate">
+    Re-run the CLI command to update an icon to the latest version.
+  </Card>
+</CardGroup>
+
+## Using in shadcn Components
+
+Lucide Animated icons work seamlessly with shadcn/ui components:
+
+<CodeGroup>
+
+```tsx Button Component
+import { Button } from "@/components/ui/button";
+import { CheckIcon } from "@/components/ui/check";
+
+export default function ActionButton() {
+  return (
+    <Button>
+      <CheckIcon size={20} className="mr-2" />
+      Confirm
+    </Button>
+  );
+}
+```
+
+```tsx Alert Component
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { BellIcon } from "@/components/ui/bell";
+
+export default function NotificationAlert() {
+  return (
+    <Alert>
+      <BellIcon size={20} />
+      <AlertTitle>New Notification</AlertTitle>
+      <AlertDescription>
+        You have a new message from the team.
+      </AlertDescription>
+    </Alert>
+  );
+}
+```
+
+```tsx Card Component
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { HeartIcon } from "@/components/ui/heart";
+import { useRef } from "react";
+
+export default function LikeCard() {
+  const heartRef = useRef<HeartIconHandle>(null);
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center justify-between">
+          Popular Post
+          <button onClick={() => heartRef.current?.startAnimation()}>
+            <HeartIcon ref={heartRef} size={24} className="text-red-500" />
+          </button>
+        </CardTitle>
+        <CardDescription>Most liked this week</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p>This post has received the most engagement...</p>
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+```tsx Toast Component
+import { useToast } from "@/components/ui/use-toast";
+import { CheckIcon } from "@/components/ui/check";
+
+export default function ToastExample() {
+  const { toast } = useToast();
+
+  const showSuccess = () => {
+    toast({
+      title: (
+        <div className="flex items-center gap-2">
+          <CheckIcon size={20} />
+          Success
+        </div>
+      ),
+      description: "Your changes have been saved.",
+    });
+  };
+
+  return <button onClick={showSuccess}>Save</button>;
+}
+```
+
+</CodeGroup>
+
+## Customizing Installed Icons
+
+Since icons are installed as source code, you can freely customize them:
+
+### Modify Animation Timing
+
+```tsx title="components/ui/heart.tsx"
+// Change the animation duration
+transition={{
+  duration: 0.6, // Changed from 0.45
+  repeat: 3,     // Changed from 2
+}}
+```
+
+### Change Animation Variants
+
+```tsx title="components/ui/bell.tsx"
+// Customize the rotation animation
+const SVG_VARIANTS: Variants = {
+  normal: { rotate: 0 },
+  animate: { rotate: [0, -15, 15, -15, 0] }, // Increased from -10, 10
+};
+```
+
+### Add Custom Props
+
+```tsx title="components/ui/check.tsx"
+interface CheckIconProps extends HTMLAttributes<HTMLDivElement> {
+  size?: number;
+  color?: string; // Add custom prop
+  animate?: boolean; // Add custom prop
+}
+```
+
+## Version Management
+
+To update an icon to the latest version, simply re-run the CLI command:
+
+```bash
+npx shadcn@latest add https://lucide-animated.com/r/heart
+```
+
+The CLI will prompt you to overwrite the existing file.
+
+<Warning>
+If you've made custom modifications to an icon, they will be lost when you update. Consider creating a separate component that wraps the icon if you need custom behavior.
+</Warning>
+
+## Finding Icon Names
+
+Visit [lucide-animated.com](https://lucide-animated.com) to browse all available icons. Each icon page shows the CLI command for installation.
+
+Alternatively, icon names follow the pattern of Lucide icon names in kebab-case:
+
+- `heart` → HeartIcon
+- `bell` → BellIcon  
+- `check` → CheckIcon
+- `arrow-right` → ArrowRightIcon
+- `chevron-down` → ChevronDownIcon
+
+## Complete Example
+
+Here's a complete example of a component using multiple shadcn components with Lucide Animated icons:
+
+```tsx
+import { useState, useRef } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { HeartIcon, HeartIconHandle } from "@/components/ui/heart";
+import { BellIcon, BellIconHandle } from "@/components/ui/bell";
+import { CheckIcon } from "@/components/ui/check";
+
+export default function SocialCard() {
+  const [liked, setLiked] = useState(false);
+  const [following, setFollowing] = useState(false);
+  const heartRef = useRef<HeartIconHandle>(null);
+  const bellRef = useRef<BellIconHandle>(null);
+
+  const handleLike = () => {
+    heartRef.current?.startAnimation();
+    setLiked(!liked);
+  };
+
+  const handleFollow = () => {
+    bellRef.current?.startAnimation();
+    setFollowing(!following);
+  };
+
+  return (
+    <Card className="w-full max-w-md">
+      <CardHeader>
+        <CardTitle className="flex items-center justify-between">
+          <span>Amazing Post</span>
+          <button onClick={handleLike}>
+            <HeartIcon 
+              ref={heartRef} 
+              size={24} 
+              className={liked ? "text-red-500" : "text-gray-400"}
+            />
+          </button>
+        </CardTitle>
+        <CardDescription>Posted by @username</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <p>This is an example of using Lucide Animated icons with shadcn/ui components.</p>
+        
+        <div className="flex gap-2">
+          <Button onClick={handleFollow} variant={following ? "default" : "outline"}>
+            {following ? (
+              <>
+                <CheckIcon size={16} className="mr-2" />
+                Following
+              </>
+            ) : (
+              <>
+                <BellIcon ref={bellRef} size={16} className="mr-2" />
+                Follow
+              </>
+            )}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+```

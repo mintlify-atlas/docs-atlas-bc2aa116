@@ -1,0 +1,278 @@
+---
+title: Animation Best Practices
+description: Tips and patterns for creating engaging icon animations
+---
+
+Learn how to create creative, meaningful animations that enhance your icons.
+
+## What Makes a Good Animation
+
+A good animation should:
+
+<CardGroup cols={2}>
+  <Card title="Enhance Meaning" icon="sparkles">
+    The animation should reinforce or reveal the icon's purpose, not just add motion for the sake of it.
+  </Card>
+  
+  <Card title="Be Creative" icon="palette">
+    Avoid generic path length animations. Think about how the icon's elements can move, transform, or interact.
+  </Card>
+  
+  <Card title="Feel Natural" icon="wind">
+    Use appropriate easing, timing, and physics to make animations feel smooth and intentional.
+  </Card>
+  
+  <Card title="Stay Performant" icon="zap">
+    Keep animations lightweight and avoid excessive complexity that could impact performance.
+  </Card>
+</CardGroup>
+
+## Avoid Generic Animations
+
+<Warning>
+**Don't use simple path length animations** - The basic `strokeDasharray`/`strokeDashoffset` "drawing" effect is too generic and will likely result in your PR being rejected.
+
+```tsx
+// ❌ Avoid this generic pattern
+const BAD_VARIANTS = {
+  normal: { pathLength: 0 },
+  animate: { pathLength: 1 }
+};
+```
+</Warning>
+
+Instead, think creatively about how the icon's meaning can be expressed through motion.
+
+## Common Animation Patterns
+
+### Scale and Pulse
+
+Great for icons that represent emphasis or interaction:
+
+```tsx
+// Heart icon - pulses to show affection
+const HeartIcon = () => {
+  return (
+    <motion.svg
+      variants={{
+        normal: { scale: 1 },
+        animate: { scale: [1, 1.08, 1] },
+      }}
+      transition={{
+        duration: 0.45,
+        repeat: 2,
+      }}
+    >
+      {/* SVG paths */}
+    </motion.svg>
+  );
+};
+```
+
+### Rotation and Shake
+
+Perfect for notifications or alert icons:
+
+```tsx
+// Bell icon - rings like a real bell
+const SVG_VARIANTS = {
+  normal: { rotate: 0 },
+  animate: { rotate: [0, -10, 10, -10, 0] },
+};
+
+const BellIcon = () => (
+  <motion.svg
+    variants={SVG_VARIANTS}
+    transition={{
+      duration: 0.5,
+      ease: "easeInOut",
+    }}
+  >
+    {/* SVG paths */}
+  </motion.svg>
+);
+```
+
+### Multi-Element Animations
+
+Animate different parts of the icon independently:
+
+```tsx
+// Sparkles icon - different parts animate separately
+const SPARKLE_VARIANTS = {
+  initial: { y: 0, fill: "none" },
+  hover: {
+    y: [0, -1, 0, 0],
+    fill: "currentColor",
+    transition: { duration: 1, bounce: 0.3 },
+  },
+};
+
+const STAR_VARIANTS = {
+  initial: { opacity: 1, x: 0, y: 0 },
+  blink: () => ({
+    opacity: [0, 1, 0, 0, 0, 0, 1],
+    transition: {
+      duration: 2,
+      type: "spring",
+      stiffness: 70,
+      damping: 10,
+      mass: 0.4,
+    },
+  }),
+};
+```
+
+### Position and Movement
+
+Animate position to convey action:
+
+```tsx
+// Send icon - moves as if being sent
+const SendIcon = () => (
+  <svg>
+    <motion.g
+      variants={{
+        normal: { x: 0, y: 0, scale: 1 },
+        animate: { x: 3, y: -3, scale: 0.8 },
+      }}
+      transition={{ duration: 0.5 }}
+    >
+      {/* Paper airplane paths */}
+    </motion.g>
+    
+    {/* Trail effect that appears during animation */}
+    <motion.path
+      variants={{
+        normal: { pathLength: 0, opacity: 0 },
+        animate: { pathLength: 1, opacity: 1 },
+      }}
+      stroke="currentColor"
+      strokeDasharray="2 2"
+    />
+  </svg>
+);
+```
+
+### Morphing Paths
+
+Change the `d` attribute to morph shapes:
+
+```tsx
+// Rocket icon - fire effect morphs
+const FIRE_VARIANTS = {
+  normal: {
+    d: "M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z",
+  },
+  animate: {
+    d: [
+      "M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z",
+      "M4.5 16.5c-1.5 1.26-3 5.5-3 5.5s4.74-1 6-2.5c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z",
+      // More variations...
+    ],
+    transition: {
+      duration: 2,
+      ease: [0.4, 0, 0.2, 1],
+      repeat: Number.POSITIVE_INFINITY,
+    },
+  },
+};
+```
+
+### Complex Choreography
+
+Combine multiple animations with delays:
+
+```tsx
+// Rocket icon - floats with varying motion
+const VARIANTS = {
+  normal: { x: 0, y: 0 },
+  animate: {
+    x: [0, 0, -3, 2, -2, 1, -1, 0],
+    y: [0, -3, 0, -2, -3, -1, -2, 0],
+    transition: {
+      duration: 6,
+      ease: "easeInOut",
+      repeat: Number.POSITIVE_INFINITY,
+      repeatType: "reverse",
+      times: [0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9, 1],
+    },
+  },
+};
+```
+
+## Framer Motion Patterns
+
+All animations in this project use [Framer Motion](https://motion.dev/). Here are the key patterns:
+
+### Using Controls
+
+Every icon uses `useAnimation()` for programmatic control:
+
+```tsx
+const controls = useAnimation();
+
+// Trigger animations
+controls.start('animate');
+controls.start('normal');
+```
+
+### Variants System
+
+Define animation states using variants:
+
+```tsx
+const VARIANTS: Variants = {
+  normal: {
+    // Initial/rest state
+  },
+  animate: {
+    // Animated state
+  },
+};
+
+<motion.svg
+  animate={controls}
+  variants={VARIANTS}
+/>
+```
+
+### Transition Options
+
+Control timing, easing, and repetition:
+
+```tsx
+transition={{
+  duration: 0.5,           // Animation duration
+  ease: "easeInOut",       // Easing function
+  repeat: 2,               // Number of repeats
+  repeatType: "reverse",   // How to repeat
+  delay: 0.1,             // Delay before starting
+  times: [0, 0.5, 1],     // Keyframe timing
+}}
+```
+
+## Animation Examples from the Project
+
+Study these examples for inspiration:
+
+- **Heart** (`icons/heart.tsx`) - Simple scale pulse
+- **Bell** (`icons/bell.tsx`) - Rotation shake
+- **Sparkles** (`icons/sparkles.tsx`) - Multi-element with fills and blinks
+- **Send** (`icons/send.tsx`) - Position change with trail effect
+- **Rocket** (`icons/rocket.tsx`) - Complex floating motion with morphing fire
+- **Zap** (`icons/zap.tsx`) - Path drawing (used creatively, not generically)
+
+## Testing Your Animation
+
+1. **Test on hover** - Ensure smooth enter/exit transitions
+2. **Test programmatically** - Use the imperative handle to trigger animations
+3. **Check performance** - Make sure animations run at 60fps
+4. **Verify responsiveness** - Test at different sizes
+5. **Review on different devices** - Check mobile and desktop behavior
+
+## Next Steps
+
+- Review the [creating icons guide](/contributing/creating-icons) for the full setup
+- Check the [contributing guidelines](/contributing/guidelines) for submission requirements
+- Browse existing icons in `/icons/` for more examples

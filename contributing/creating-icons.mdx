@@ -1,0 +1,206 @@
+---
+title: Creating Icons
+description: Step-by-step guide to creating new animated icons
+---
+
+This guide walks you through creating a new animated icon for Lucide Animated.
+
+## File Structure
+
+<Steps>
+  <Step title="Create the icon file">
+    Navigate to the `/icons/` directory and create a new file with the icon name in lowercase, using hyphens for spaces (following Lucide naming convention):
+
+    ```
+    /icons/[icon-name].tsx
+    ```
+
+    **Examples:**
+    - `heart-icon.tsx`
+    - `arrow-up.tsx`
+    - `user-profile.tsx`
+  </Step>
+
+  <Step title="Use the template">
+    Copy and paste the following template code into your new file:
+
+    ```tsx
+    'use client';
+
+    import { useAnimation } from 'motion/react';
+    import type { HTMLAttributes } from 'react';
+    import { forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
+    import { cn } from '@/lib/utils';
+
+    export interface [YourIconName]IconHandle {
+      startAnimation: () => void;
+      stopAnimation: () => void;
+    }
+
+    interface [YourIconName]IconProps extends HTMLAttributes<HTMLDivElement> {
+      size?: number;
+    }
+
+    const [YourIconName]Icon = forwardRef<[YourIconName]IconHandle, [YourIconName]IconProps>(
+      ({ onMouseEnter, onMouseLeave, className, size = 28, ...props }, ref) => {
+        const controls = useAnimation();
+        const isControlledRef = useRef(false);
+
+        useImperativeHandle(ref, () => {
+          isControlledRef.current = true;
+          return {
+            startAnimation: () => controls.start('animate'),
+            stopAnimation: () => controls.start('normal'),
+          };
+        });
+
+        const handleMouseEnter = useCallback(
+          (e: React.MouseEvent<HTMLDivElement>) => {
+            if (!isControlledRef.current) {
+              controls.start('animate');
+            } else {
+              onMouseEnter?.(e);
+            }
+          },
+          [controls, onMouseEnter]
+        );
+
+        const handleMouseLeave = useCallback(
+          (e: React.MouseEvent<HTMLDivElement>) => {
+            if (!isControlledRef.current) {
+              controls.start('normal');
+            } else {
+              onMouseLeave?.(e);
+            }
+          },
+          [controls, onMouseLeave]
+        );
+
+        return (
+          <div
+            className={cn(className)}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            {...props}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width={size}
+              height={size}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              {/* your svg code here */}
+            </svg>
+          </div>
+        );
+      }
+    );
+
+    [YourIconName]Icon.displayName = '[YourIconName]Icon';
+
+    export { [YourIconName]Icon };
+    ```
+  </Step>
+
+  <Step title="Replace placeholders">
+    Replace `[YourIconName]` with your icon name in **PascalCase**:
+
+    **Examples:**
+    - `HeartIcon`
+    - `ArrowUp`
+    - `UserProfile`
+  </Step>
+
+  <Step title="Add SVG content">
+    1. Find your icon on [lucide.dev](https://lucide.dev/)
+    2. Copy the SVG path elements
+    3. Replace the `{/* your svg code here */}` comment with the actual SVG content
+  </Step>
+
+  <Step title="Add animation logic">
+    Add your animation logic using Framer Motion's `motion` components and the `controls` object to create engaging hover animations.
+
+    See the [Animation Tips guide](/contributing/animation-tips) for best practices and examples.
+  </Step>
+</Steps>
+
+## Naming Conventions
+
+### File Names
+
+- Use **kebab-case** (lowercase with hyphens)
+- Follow Lucide's exact naming from [lucide.dev](https://lucide.dev/)
+- Examples: `heart-icon.tsx`, `arrow-up.tsx`, `smile-plus.tsx`
+
+### Component Names
+
+- Use **PascalCase**
+- Add "Icon" suffix
+- Examples: `HeartIcon`, `ArrowUpIcon`, `SmilePlusIcon`
+
+## Adding to Icon List
+
+<Steps>
+  <Step title="Open the index file">
+    Open the `icons/index.tsx` file (note: it's `.tsx` not `.ts`).
+  </Step>
+
+  <Step title="Import your icon">
+    Add your icon import at the top of the file:
+
+    ```tsx
+    import { [YourIconName]Icon } from './[icon-name]';
+    ```
+
+    **Example:**
+    ```tsx
+    import { SmilePlusIcon } from './smile-plus';
+    ```
+  </Step>
+
+  <Step title="Add to ICON_LIST array">
+    Add your icon to the `ICON_LIST` array at the **very beginning (top)** of the list:
+
+    ```tsx
+    {
+      name: '[icon-name]',
+      icon: [YourIconName]Icon,
+      keywords: ['keyword1', 'keyword2', 'keyword3'],
+    },
+    ```
+
+    **Example:**
+    ```tsx
+    {
+      name: 'smile-plus',
+      icon: SmilePlusIcon,
+      keywords: ['smile', 'plus', 'emotion', 'face'],
+    },
+    ```
+  </Step>
+
+  <Step title="Use Lucide data">
+    Use the exact icon name, keywords, and other data from the [lucide.dev](https://lucide.dev/) website for your specific icon.
+  </Step>
+</Steps>
+
+## Running the Generator
+
+After adding your icon, run the generator to update the registry:
+
+```bash
+pnpm run gen-cli
+```
+
+This ensures your icon is available through the shadcn CLI.
+
+## Next Steps
+
+- Learn about [animation best practices](/contributing/animation-tips)
+- Review the [contributing guidelines](/contributing/guidelines)
+- Test your icon thoroughly before submitting

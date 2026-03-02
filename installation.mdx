@@ -1,0 +1,142 @@
+---
+title: Installation
+description: Install Lucide Animated in your React project
+---
+
+# Installation
+
+There are two ways to install Lucide Animated icons in your project: using a package manager or via the shadcn/ui CLI.
+
+## Prerequisites
+
+<Note>
+  Lucide Animated requires **Motion** (Framer Motion) as a peer dependency. Make sure to install it along with the icons.
+</Note>
+
+## Package Manager Installation
+
+Install Lucide Animated icons using your preferred package manager:
+
+<CodeGroup>
+
+```bash npm
+npm install motion
+```
+
+```bash pnpm
+pnpm add motion
+```
+
+```bash yarn
+yarn add motion
+```
+
+```bash bun
+bun add motion
+```
+
+</CodeGroup>
+
+### Dependencies
+
+The package requires the following dependencies:
+
+```json package.json
+{
+  "dependencies": {
+    "motion": "^12.34.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}
+```
+
+<Tip>
+  Motion is the only required peer dependency. The icons are designed to work with React 18+ and React 19.
+</Tip>
+
+## shadcn/ui CLI Method
+
+For shadcn/ui users, you can install individual icons directly using the CLI. This is the recommended approach as it copies the icon component directly into your project.
+
+<Steps>
+
+<Step title="Install Motion">
+  First, ensure Motion is installed in your project:
+  
+  <CodeGroup>
+  
+  ```bash npm
+  npm install motion
+  ```
+  
+  ```bash pnpm
+  pnpm add motion
+  ```
+  
+  ```bash yarn
+  yarn add motion
+  ```
+  
+  ```bash bun
+  bun add motion
+  ```
+  
+  </CodeGroup>
+</Step>
+
+<Step title="Add Icons via CLI">
+  Use the shadcn CLI to add individual icons to your project:
+  
+  <CodeGroup>
+  
+  ```bash npm
+  npx shadcn add @lucide-animated/heart
+  ```
+  
+  ```bash pnpm
+  pnpm dlx shadcn add @lucide-animated/heart
+  ```
+  
+  ```bash yarn
+  yarn dlx shadcn add @lucide-animated/heart
+  ```
+  
+  ```bash bun
+  bunx shadcn add @lucide-animated/heart
+  ```
+  
+  </CodeGroup>
+  
+  This will copy the icon component into your project's components directory.
+</Step>
+
+<Step title="Use the Icon">
+  Import and use the icon in your React components:
+  
+  ```tsx
+  import { HeartIcon } from "@/components/icons/heart";
+  
+  export default function App() {
+    return <HeartIcon size={32} />;
+  }
+  ```
+</Step>
+
+</Steps>
+
+<Note>
+  The shadcn CLI method gives you full control over the icon component code, making it easy to customize animations and behavior.
+</Note>
+
+## Registry URL
+
+The icons are available from the Lucide Animated registry:
+
+```
+https://lucide-animated.com/r/[icon-name].json
+```
+
+## Next Steps
+
+Now that you have Lucide Animated installed, check out the [Quick Start](/quickstart) guide to learn how to use the icons in your project.
